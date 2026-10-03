@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<script>(function(){var t=null;try{t=localStorage.getItem("isv_theme")}catch(e){}if(!t)t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t)})()</script>
+<title>iSurveillanz – Daily Report Form</title>
+<script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
+<style>:root{--p:#1E40AF;--pl:#2563EB;--bg:#F1F5F9;--bd:#CBD5E1;--bl:#E2E8F0;--tx:#0F172A;--mu:#64748B;
+--card:#fff;--soft:#F8FAFC;--hov:#EFF6FF;--gbg:#F0FDF4;--rbg:#FEF2F2;--th:#F1F5F9;--hb:#BFDBFE;--ht:#1E3A8A;--gt:#166534;--rt:#991B1B;--gb:#86EFAC;--rb:#FCA5A5;--dur:#DBEAFE;--durt:#1E3A8A;--pa:#1E40AF;color-scheme:light}
+:root[data-theme=dark]{--bg:#0B1220;--tx:#E5E7EB;--mu:#94A3B8;--bd:#334155;--bl:#243044;
+--card:#111827;--soft:#0F1A2E;--hov:#172B4D;--gbg:#0F2A1D;--rbg:#2E1416;--th:#1F2937;--hb:#1E40AF;--ht:#BFDBFE;--gt:#86EFAC;--rt:#FCA5A5;--gb:#166534;--rb:#991B1B;--dur:#1E3A8A;--durt:#DBEAFE;--pa:#93C5FD;color-scheme:dark}
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+body{background:var(--bg);color:var(--tx);padding-bottom:60px}
+header{background:linear-gradient(135deg,#1E3A8A,#2563EB);color:#fff;padding:20px 32px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+header h1{font-size:24px}header p{font-size:14px;opacity:.9;margin-top:4px}
+.today{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);padding:8px 16px;border-radius:8px;font-weight:600}
+.wrap{max-width:1440px;margin:24px auto;padding:0 24px}
+.card{background:var(--card);border:1px solid var(--bl);border-radius:12px;padding:22px;box-shadow:0 2px 8px rgba(0,0,0,.05);margin-bottom:20px}
+.bar{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:flex-end}
+.grp{display:flex;flex-direction:column;gap:5px}.grp label{font-size:12px;font-weight:700;color:var(--mu);text-transform:uppercase}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+input,select{color:var(--tx);border:1px solid var(--bd);border-radius:6px;padding:9px 10px;font-size:14px;background:var(--card);outline:none}
+input:focus,select:focus{border-color:var(--pl);box-shadow:0 0 0 3px rgba(37,99,235,.15)}
+.badge{font-size:13px;font-weight:700;color:var(--pa);background:var(--hov);border:1px solid var(--hb);padding:7px 12px;border-radius:6px}
+.btn{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:9px 16px;border-radius:6px;cursor:pointer;border:1px solid transparent;background:var(--p);color:#fff}
+.btn:hover{filter:brightness(1.1)}.btn.g{background:#059669}.btn.s{background:var(--card);color:var(--tx);border-color:var(--bd)}.btn.d{background:var(--card);color:#DC2626;border-color:#FECACA}.btn.sm{padding:5px 10px;font-size:12px}
+.tabs{display:flex;gap:6px;border-bottom:2px solid var(--bl);margin-bottom:18px;flex-wrap:wrap}
+.tab{background:none;border:0;padding:12px 20px;font-size:15px;font-weight:600;color:var(--mu);cursor:pointer;border-radius:8px 8px 0 0}
+.tab.on{color:var(--pa);background:var(--card);border:1px solid var(--bl);border-bottom-color:var(--card);margin-bottom:-2px}
+.tab i{font-style:normal;background:var(--bl);font-size:11px;padding:2px 7px;border-radius:12px;margin-left:6px}
+.pane{display:none}.pane.on{display:block}
+h2{font-size:20px}.help{font-size:13px;color:var(--mu);margin:4px 0 16px}
+.tw{max-height:68vh;overflow:auto;border:1px solid var(--bd);border-radius:10px}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:14px}
+thead th{position:sticky;top:0;z-index:2;background:#1E3A8A;color:#fff;font-size:12px;text-transform:uppercase;letter-spacing:.06em;padding:14px 12px;text-align:left;border-right:1px solid rgba(255,255,255,.15);white-space:nowrap}
+td{padding:12px;border-bottom:1px solid var(--bl);background:var(--card);vertical-align:middle}
+tbody tr:nth-child(even) td{background:var(--soft)}tbody tr:hover td{background:var(--hov)}
+td:first-child{font-weight:700;color:var(--pa);text-align:center}
+td.c,th.c{text-align:center}
+td input,td select{width:100%}td input[type=number]{width:80px;font-size:16px;font-weight:700;text-align:center}td input[type=time]{width:130px}
+tr.rb td:first-child{box-shadow:inset 5px 0 0 #22C55E}tr.rn td:first-child{box-shadow:inset 5px 0 0 #EF4444}tr.rm td:first-child{box-shadow:inset 5px 0 0 #F59E0B}
+.sg{background:var(--gbg)!important;border:2px solid var(--gb)!important;color:var(--gt)}.sr{background:var(--rbg)!important;border:2px solid var(--rb)!important;color:var(--rt)}
+.empty{padding:44px!important;text-align:center!important;color:var(--mu)!important;font-weight:400!important}
+.tots{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-top:18px}
+.tb{background:var(--soft);border:1px solid var(--bl);border-left:5px solid var(--bd);border-radius:8px;padding:14px 18px}
+.tb span{display:block;font-size:12px;font-weight:700;color:var(--mu);text-transform:uppercase}.tb b{font-size:28px}
+.tb.g{border-left-color:#22C55E;background:var(--gbg)}.tb.g b{color:var(--gt)}.tb.r{border-left-color:#EF4444;background:var(--rbg)}.tb.r b{color:var(--rt)}
+.ph{display:flex;gap:12px;align-items:center}
+.th{width:84px;height:84px;border-radius:10px;border:2px solid var(--bd);overflow:hidden;background:var(--th);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;cursor:zoom-in}
+.th img{width:100%;height:100%;object-fit:cover}
+.pb{display:flex;flex-direction:column;gap:6px}.pb select{font-size:12px;padding:5px}
+.rem{background:var(--hov);border:1px solid var(--hb);color:var(--ht);font-weight:500;border-radius:6px;padding:8px 12px;font-size:13px;min-width:260px}
+.dur{display:inline-block;margin-top:6px;background:var(--dur);color:var(--durt);font-size:12px;font-weight:700;padding:3px 9px;border-radius:12px}
+.mg{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:18px}
+.mc{border:1px solid var(--bl);border-radius:10px;padding:12px;text-align:center}
+.mc .th{width:140px;height:140px;margin:0 auto 10px}.mc b{display:block;margin-bottom:8px;word-break:break-word}
+#hv{position:fixed;z-index:9999;display:none;pointer-events:none;background:var(--card);border:2px solid var(--pl);border-radius:12px;padding:10px;width:340px;box-shadow:0 16px 36px rgba(0,0,0,.28);text-align:center}
+#hv img{width:100%;height:320px;object-fit:contain;background:var(--soft);border-radius:8px}#hv div{margin-top:8px;font-weight:700;color:var(--pa)}
+.mo{position:fixed;inset:0;background:rgba(15,23,42,.65);display:none;align-items:center;justify-content:center;z-index:9000;padding:20px}.mo.on{display:flex}
+.mb{background:var(--card);border-radius:12px;width:1000px;max-width:96vw;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 40px rgba(0,0,0,.3)}
+.mh{padding:14px 22px;border-bottom:1px solid var(--bl);display:flex;justify-content:space-between;align-items:center;background:var(--soft)}.mh h3{font-size:18px}
+.mbd{padding:22px;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px}
+.fi{border:2px solid var(--bl);border-radius:10px;padding:10px;text-align:center;cursor:pointer;background:var(--card);transition:.15s}
+.fi:hover{border-color:var(--pa);background:var(--hov);transform:translateY(-2px)}
+.fi img{width:100%;height:240px;object-fit:contain;background:var(--th);border-radius:8px;display:block;margin-bottom:8px}.fi b{font-size:14px;word-break:break-word}
+td input.tin{width:125px;text-align:center;font-weight:700;font-size:15px}
+#err{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(15,23,42,.45);z-index:100000;padding:20px}
+#err.on{display:flex}
+#err div{background:#DC2626;color:#fff;border-radius:16px;padding:36px 48px;max-width:560px;width:100%;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.4);cursor:pointer;animation:pop .15s ease-out}
+#err b{display:block;font-size:30px;margin-bottom:10px}#err span{display:block;font-size:20px;line-height:1.5}
+@keyframes pop{from{transform:scale(.9);opacity:0}to{transform:none;opacity:1}}
+#toast{position:fixed;bottom:24px;right:24px;background:#0F172A;color:#fff;padding:12px 20px;border-radius:8px;transform:translateY(100px);opacity:0;transition:.25s;z-index:99999}#toast.show{transform:none;opacity:1}
+#thb{background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.35)}
+:root[data-theme=dark] #toast{background:#334155}
+</style></head><body>
+<header><div><h1>iSurveillanz – Daily Report Form</h1><p>Customer Visit + Staff Working Time</p></div><div class="row"><button class="btn sm" id="thb" onclick="toggleTheme()"></button><div class="today" id="today"></div></div></header>
+<div class="wrap">
+<div class="card bar">
+ <div class="row">
+  <div class="grp"><label>Client</label><div class="row"><select id="cl" onchange="changeClient()" style="min-width:210px;font-weight:600"></select><button class="btn s sm" onclick="addClient()">＋ New Client</button><button class="btn d sm" onclick="delClient()" title="Remove client from list">🗑️</button></div></div>
+  <div class="grp"><label>Report Date</label><div class="row"><input type="date" id="rd" onchange="changeDate()"><span class="badge" id="rdb"></span></div></div>
+  <div class="grp"><label>Prepared By</label><input id="pb" style="width:250px" value="iSurveillanz Surveillance Team" onchange="save()"></div>
+ </div>
+ <div class="row">
+  <button class="btn g" id="xb" onclick="downloadExcel()">↓ Download This Day – Excel</button>
+  <button class="btn s" onclick="loadDay()">↻ Load Day</button>
+  <button class="btn d" onclick="clearDay()">🗑️ Clear This Day</button>
+  <button class="btn s sm" onclick="backup()">💾 Backup JSON</button>
+  <label class="btn s sm">📂 Restore JSON<input type="file" accept=".json" hidden onchange="restore(event)"></label>
+ </div>
+</div>
+<div class="tabs">
+ <button class="tab on" data-t="c" onclick="tab('c')">🛍️ Customer Visit<i id="nc">0</i></button>
+ <button class="tab" data-t="s" onclick="tab('s')">👤 Staff Working Time<i id="ns">0</i></button>
+ <button class="tab" data-t="m" onclick="tab('m')">🖼️ Staff Photo Master<i id="nm">0</i></button>
+</div>
+
+<div id="p-c" class="pane on"><div class="card">
+ <h2>🛍️ Customer Visit <span class="badge cbadge"></span></h2><p class="help">Each line is one result: choose Bought = 1 or Did Not Buy = 1 and the other becomes "-". Totals count lines.</p>
+ <div class="tw"><table><thead><tr><th class="c">Sr. No.</th><th>Time</th><th>Camera</th><th class="c">Customers</th><th class="c">Bought ✔</th><th class="c">Did Not Buy ✘</th><th>Remarks</th><th class="c">Action</th></tr></thead><tbody id="cb"></tbody></table></div>
+ <div style="margin-top:14px"><button class="btn" onclick="addCust()">＋ Add Customer Line</button></div>
+ <div class="tots"><div class="tb"><span>Visit Records</span><b id="t1">0</b></div><div class="tb"><span>Total Customers</span><b id="t2">0</b></div><div class="tb g"><span>Total Bought</span><b id="t3">0</b></div><div class="tb r"><span>Total Did Not Buy</span><b id="t4">0</b></div></div>
+</div></div>
+
+<div id="p-s" class="pane"><div class="card">
+ <h2>👤 Staff Working Time <span class="badge cbadge"></span></h2><p class="help">Upload a face photo (name is taken from the file name) or pick one from the Master, then set Start and End time.</p>
+ <div class="tw"><table><thead><tr><th class="c">Sr. No.</th><th>Staff Name</th><th>Staff Photo</th><th>Start Time</th><th>End Time</th><th>Remarks</th><th class="c">Action</th></tr></thead><tbody id="sb"></tbody></table></div>
+ <div style="margin-top:14px"><button class="btn" onclick="addStaff()">＋ Add Staff Line</button></div>
+</div></div>
+
+<div id="p-m" class="pane"><div class="card">
+ <div class="row" style="justify-content:space-between"><div><h2>🖼️ Staff Photo Master <span class="badge cbadge"></span></h2><p class="help">Faces for the selected client, reusable on every date. Select a client first.</p></div>
+ <button class="btn" onclick="if(!needClient())$('mf').click()">📷 Add New Face to Master</button><input type="file" id="mf" accept="image/*" hidden onchange="addMaster(event)"></div>
+ <div id="mg" class="mg"></div>
+</div></div>
+</div>
+<div class="mo" id="fm" onclick="if(event.target===this)closePicker()"><div class="mb">
+ <div class="mh"><h3>Select Staff Face</h3><button class="btn s sm" onclick="closePicker()">✕ Close</button></div>
+ <div class="mbd" id="fg"></div>
+</div></div>
+<div id="hv"><img id="hi" alt=""><div id="hn"></div></div>
+<div id="err" onclick="this.classList.remove('on')"><div><b id="errt">⚠ Time not understood</b><span id="errm"></span></div></div>
+<div id="toast"></div>
+<input type="file" id="sf" accept="image/*" hidden onchange="staffPhoto(event)">
+
+<script>
+const CAMS=Array.from({length:10},(_,i)=>"NVR 1 - Cam "+String(i+1).padStart(2,"0"));
+let date="",cust=[],staff=[],master=[],upIdx=null;
+const $=id=>document.getElementById(id);
+const esc=s=>typeof s!=="string"?"":s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+const clamp=(v,a,b)=>{let n=parseInt(v,10);if(isNaN(n))n=a;return Math.max(a,Math.min(b,n))};
+const ymd=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const dmy=s=>s?s.split("-").reverse().join("-"):"";
+const MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const nice=s=>{const p=s.split("-");return p[2]+" "+MON[+p[1]-1]+" "+p[0]};
+const ampm=t=>{if(!t)return"";let[h,m]=t.split(":");h=+h;const a=h>=12?"PM":"AM";h=h%12||12;return h+":"+m+" "+a};
+const now24=()=>{const n=new Date();return String(n.getHours()).padStart(2,"0")+":"+String(n.getMinutes()).padStart(2,"0")};
+const remark=(s,e)=>(!s&&!e)?"1 staff shift hours to be recorded.":"1 staff started work at the shop at "+(ampm(s)||"--:--")+" and finished at "+(ampm(e)||"--:--")+".";
+const nameFrom=f=>(f||"").replace(/\.[^/.]+$/,"").replace(/[_-]+/g," ").replace(/[^\w\s]/g," ").replace(/\s+/g," ").trim()||"Staff";
+let tt;function toast(m){const t=$("toast");t.textContent=m;t.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("show"),3000)}
+
+/* Storage: IndexedDB with localStorage fallback */
+let _db=null;
+function db(){return new Promise(r=>{if(_db)return r(_db);try{const q=indexedDB.open("iSurveillanzDB2",1);q.onupgradeneeded=e=>e.target.result.createObjectStore("kv");q.onsuccess=e=>{_db=e.target.result;r(_db)};q.onerror=()=>r(null)}catch(e){r(null)}})}
+async function kvGet(k){const d=await db();if(d)return new Promise(r=>{const q=d.transaction("kv").objectStore("kv").get(k);q.onsuccess=()=>r(q.result??null);q.onerror=()=>r(null)});try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}}
+async function kvSet(k,v){const d=await db();if(d)return new Promise(r=>{const t=d.transaction("kv","readwrite");t.objectStore("kv").put(v,k);t.oncomplete=()=>r(1);t.onerror=()=>r(0)});try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+async function kvDel(k){const d=await db();if(d)return new Promise(r=>{const t=d.transaction("kv","readwrite");t.objectStore("kv").delete(k);t.oncomplete=()=>r(1)});try{localStorage.removeItem(k)}catch(e){}}
+async function kvAll(p){const d=await db();if(!d)return[];return new Promise(r=>{const o=[];const q=d.transaction("kv").objectStore("kv").openCursor();q.onsuccess=e=>{const c=e.target.result;if(c){if(String(c.key).startsWith(p))o.push(c.value);c.continue()}else r(o)};q.onerror=()=>r(o)})}
+
+function themeLabel(){const d=document.documentElement.getAttribute("data-theme")==="dark";$("thb").textContent=d?"☀️ Light":"🌙 Dark"}
+function toggleTheme(){const n=document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark";document.documentElement.setAttribute("data-theme",n);try{localStorage.setItem("isv_theme",n)}catch(e){}themeLabel()}
+let clients=[],lastClient="",client="";
+const safeName=n=>n.replace(/[\\/:*?"<>|]+/g,"").replace(/\s+/g,"_");
+const fileName=n=>"iSurveillanz_"+(safeName(n||"")||"[ClientName]")+"_Daily_Surveillance_Report_"+date+".xlsx";
+const dayKey=(d,c)=>c?"day:"+d+"::"+c:"day:"+d;
+function fillClients(){
+ $("cl").innerHTML='<option value="">— Select client —</option>'+clients.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join("");
+ $("cl").value=client;
+ document.querySelectorAll(".cbadge").forEach(b=>{b.textContent=client||"No client selected";b.style.opacity=client?1:.6})}
+async function setClient(c){client=c;lastClient=c;await kvSet("lastClient",c);fillClients();await loadDay();renderMaster()}
+async function changeClient(){await setClient($("cl").value);toast(client?"Client: "+client:"No client selected")}
+async function addClient(){const n=(prompt("New client name:")||"").trim();if(!n)return;
+ let ex=clients.find(c=>c.toLowerCase()===n.toLowerCase());
+ if(!ex){clients.push(n);clients.sort((a,b)=>a.localeCompare(b));await kvSet("clients",clients);ex=n}
+ await setClient(ex);toast("Client: "+ex)}
+async function delClient(){if(!client)return;
+ if(!confirm('Remove "'+client+'" from the client list?\n(Saved reports for this client are kept; adding the same name again brings them back.)'))return;
+ clients=clients.filter(c=>c!==client);await kvSet("clients",clients);await setClient("")}
+function downloadExcel(){if(needClient())return;doExcel(client)}
+/* Init */
+window.addEventListener("DOMContentLoaded",async()=>{
+ themeLabel();
+ const t=new Date();date=ymd(t);$("rd").value=date;$("rdb").textContent=dmy(date);
+ $("today").textContent=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][t.getDay()]+", "+nice(date);
+ master=(await kvGet("master"))||[];clients=(await kvGet("clients"))||[];lastClient=(await kvGet("lastClient"))||"";client=clients.includes(lastClient)?lastClient:"";fillClients();
+ await loadDay();renderMaster();hoverSetup();
+});
+function tab(k){document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("on",b.dataset.t===k));document.querySelectorAll(".pane").forEach(p=>p.classList.toggle("on",p.id==="p-"+k));if(k==="m")renderMaster()}
+const mine=()=>master.filter(m=>m.client===client||!m.client);
+function badges(){$("nc").textContent=cust.length;$("ns").textContent=staff.length;$("nm").textContent=mine().length}
+async function changeDate(){const v=$("rd").value;if(!v)return;date=v;$("rdb").textContent=dmy(v);await loadDay();toast("Loaded "+dmy(v))}
+async function save(){if(!date)return;await kvSet(dayKey(date,client),{date,client,preparedBy:$("pb").value.trim()||"iSurveillanz Surveillance Team",customers:cust,staff});badges()}
+function normalize(r){const c=clamp(r.customers,1,99999);r.customers=c;
+ r.bought=(r.bought==="1"||+r.bought>0)?1:0;r.didNotBuy=1-r.bought;
+ if(r.custom===undefined)r.custom=!!r.isCustomCamera;if(!r.camera)r.camera=CAMS[0];return r}
+async function loadDay(){const d=await kvGet(dayKey(date,client));
+ if(d){cust=(d.customers||[]).map(normalize);staff=d.staff||[];if(d.preparedBy)$("pb").value=d.preparedBy}else{cust=[];staff=[]}
+ renderCust();renderStaff()}
+async function clearDay(){if(!confirm("Clear Customer and Staff records for "+(client?client+" – ":"")+dmy(date)+"?"))return;cust=[];staff=[];await kvDel(dayKey(date,client));renderCust();renderStaff();toast("Cleared "+dmy(date))}
+
+/* Customers */
+function addCust(){if(needClient())return;cust.push({time:now24(),camera:CAMS[0],custom:false,customers:1,bought:0,didNotBuy:1,remarks:""});renderCust();save()}
+function delCust(i){cust.splice(i,1);renderCust();save()}
+function cField(i,f,v){cust[i][f]=v;save()}
+function cTime(i,v){const t=parseTime(v,false,true);if(t===null){errPopup("Try 2, 230, 2pm or 14:30");renderCust();return}cust[i].time=t;renderCust();save()}
+function cCam(i,sel){if(sel.value==="__T"){cust[i].custom=true;cust[i].camera=""}else{cust[i].custom=false;cust[i].camera=sel.value}renderCust();save()}
+function cCount(i,v){cust[i].customers=clamp(v,1,99999);renderCust();save()}
+function cBought(i,v){const r=cust[i];r.bought=v==="1"?1:0;r.didNotBuy=1-r.bought;renderCust();save()}
+function cNot(i,v){const r=cust[i];r.didNotBuy=v==="1"?1:0;r.bought=1-r.didNotBuy;renderCust();save()}
+function renderCust(){
+ const tb=$("cb");tb.innerHTML="";let sc=0,sb=0,sn=0;
+ if(!cust.length)tb.innerHTML='<tr><td colspan="8" class="empty">No customer visits recorded for this day. Click "＋ Add Customer Line" to start.</td></tr>';
+ cust.forEach((r,i)=>{
+  const c=r.customers,b=+r.bought||0,d=+r.didNotBuy||0;sc+=c;sb+=b;sn+=d;
+  const opts=CAMS.map(p=>`<option ${!r.custom&&r.camera===p?"selected":""}>${p}</option>`).join("");
+  const tr=document.createElement("tr");tr.className=b===1?"rb":"rn";
+  tr.innerHTML=`<td>${i+1}</td>
+  <td><input class="tin" value="${ampm(r.time||"10:00")}" placeholder="e.g. 2" onfocus="this.select()" onchange="cTime(${i},this.value)"></td>
+  <td><select onchange="cCam(${i},this)">${opts}<option value="__T" ${r.custom?"selected":""}>✎ Type Camera</option></select>${r.custom?`<input type="text" style="margin-top:6px" placeholder="e.g. NVR 2 Cam 150" value="${esc(r.camera)}" oninput="cField(${i},'camera',this.value)">`:""}</td>
+  <td class="c"><input type="number" min="1" value="${c}" onchange="cCount(${i},this.value)"></td>
+  <td class="c"><select class="${b?"sg":""}" style="width:80px;font-size:16px;font-weight:700;text-align:center" onchange="cBought(${i},this.value)"><option value="0" ${b?"":"selected"}>-</option><option value="1" ${b?"selected":""}>1</option></select></td>
+  <td class="c"><select class="${d?"sr":""}" style="width:80px;font-size:16px;font-weight:700;text-align:center" onchange="cNot(${i},this.value)"><option value="0" ${d?"":"selected"}>-</option><option value="1" ${d?"selected":""}>1</option></select></td>
+  <td><input type="text" placeholder="Optional notes (UI only)" value="${esc(r.remarks||"")}" oninput="cField(${i},'remarks',this.value)"></td>
+  <td class="c"><button class="btn d sm" onclick="delCust(${i})">🗑️</button></td>`;
+  tb.appendChild(tr)});
+ $("t1").textContent=cust.length;$("t2").textContent=sc;$("t3").textContent=sb;$("t4").textContent=sn;badges()}
+
+/* Staff */
+function addStaff(){if(needClient())return;staff.push({name:"Staff",photo:"",startTime:"12:00",endTime:"21:00"});renderStaff();save()}
+function delStaff(i){staff.splice(i,1);renderStaff();save()}
+function sName(i,v){staff[i].name=v.trim();save()}
+let et;function errPopup(m,t){$("errt").textContent=t||"⚠ Time not understood";$("errm").innerHTML=m;$("err").classList.add("on");clearTimeout(et);et=setTimeout(()=>$("err").classList.remove("on"),3500)}
+function needClient(){if(client)return false;
+ errPopup("Choose a client from the Client dropdown at the top,<br>or click ＋ New Client.","⚠ Select a client first");
+ const c=$("cl");if(c)c.focus();return true}
+function parseTime(v,isStart,isCust){
+ const m=String(v).trim().toLowerCase().replace(/\./g,":").match(/^(\d{1,2})(?::?(\d{2}))?\s*([ap])?m?$/);
+ if(!m)return null;let h=+m[1];const mi=m[2]?+m[2]:0;
+ if(mi>59||h>23)return null;
+ if(m[3]){if(h<1||h>12)return null;h=h%12+(m[3]==="p"?12:0)}
+ else if(h>=1&&h<=12){h=isCust?(h>=10&&h<=11?h:h===12?12:h+12):isStart?(h>=6&&h<=11?h:h===12?12:h+12):(h===12?12:h+12)}
+ return String(h).padStart(2,"0")+":"+String(mi).padStart(2,"0")}
+function sTime(i,f,v){const t=parseTime(v,f==="startTime");
+ if(t===null){errPopup("Try 9, 930, 9pm or 14:30");renderStaff();return}
+ staff[i][f]=t;renderStaff();save()}
+function pickPhoto(i){if(needClient())return;upIdx=i;$("sf").value="";$("sf").click()}
+function staffPhoto(e){const f=e.target.files[0];if(!f||upIdx===null)return;const rd=new FileReader();
+ rd.onload=async ev=>{const n=nameFrom(f.name);staff[upIdx].photo=ev.target.result;staff[upIdx].name=n;if(client)await upsertMaster(n,ev.target.result);renderStaff();await save();toast(client?'Photo added for "'+n+'"':"Photo added. Select a client to also save it in the Master")};rd.readAsDataURL(f)}
+let pickIdx=null;
+function openPicker(i){if(needClient())return;pickIdx=i;const g=$("fg");
+ g.innerHTML=mine().length?"":'<p style="grid-column:1/-1;text-align:center;color:var(--mu);padding:30px">No faces for this client yet. Use "📷 Upload Face" first.</p>';
+ mine().forEach(m=>{const d=document.createElement("div");d.className="fi";d.onclick=()=>{fromMaster(pickIdx,m.id);closePicker()};
+  d.innerHTML=`<img src="${m.photo}" alt=""><b>${esc(m.name)}</b>`;g.appendChild(d)});
+ $("fm").classList.add("on")}
+function closePicker(){$("fm").classList.remove("on");pickIdx=null}
+function fromMaster(i,id){const m=master.find(x=>x.id===id);if(!m)return;staff[i].name=m.name;staff[i].photo=m.photo;renderStaff();save()}
+function dur(s,e){if(!s||!e)return"";const[a,b]=s.split(":").map(Number),[c,d]=e.split(":").map(Number);let m=(c*60+d)-(a*60+b);if(m<0)m+=1440;return `<span class="dur">⏱ ${Math.floor(m/60)}h ${m%60}m</span>`}
+function renderStaff(){
+ const tb=$("sb");tb.innerHTML="";
+ if(!staff.length)tb.innerHTML='<tr><td colspan="7" class="empty">No staff shifts recorded for this day. Click "＋ Add Staff Line" to start.</td></tr>';
+ staff.forEach((r,i)=>{
+  const mo=master.map(m=>`<option value="${m.id}">${esc(m.name)}</option>`).join("");
+  const tr=document.createElement("tr");
+  tr.innerHTML=`<td>${i+1}</td>
+  <td><input type="text" style="font-weight:600" value="${esc(r.name||"")}" placeholder="Staff Name" oninput="sName(${i},this.value)"></td>
+  <td><div class="ph"><div class="th hp" data-name="${esc(r.name||"")}">${r.photo?`<img src="${r.photo}" alt="">`:"👤"}</div>
+   <div class="pb"><button class="btn s sm" onclick="pickPhoto(${i})">📷 Upload Face</button>
+   <button class="btn s sm" onclick="openPicker(${i})">👤 Face Dropdown</button></div></div></td>
+  <td><input class="tin" value="${ampm(r.startTime||"12:00")}" placeholder="e.g. 12" onfocus="this.select()" onchange="sTime(${i},'startTime',this.value)"></td>
+  <td><input class="tin" value="${ampm(r.endTime||"21:00")}" placeholder="e.g. 9" onfocus="this.select()" onchange="sTime(${i},'endTime',this.value)"></td>
+  <td><div class="rem">${esc(remark(r.startTime,r.endTime))}</div>${dur(r.startTime,r.endTime)}</td>
+  <td class="c"><button class="btn d sm" onclick="delStaff(${i})">🗑️</button></td>`;
+  tb.appendChild(tr)});badges()}
+
+/* Master */
+async function upsertMaster(name,photo){if(needClient())return;
+ const x=master.find(m=>m.client===client&&m.name.toLowerCase()===name.toLowerCase());
+ if(x)x.photo=photo;else master.push({id:"m_"+Date.now()+Math.random().toString(36).slice(2,6),name,photo,client});
+ await kvSet("master",master);renderMaster()}
+function addMaster(e){const f=e.target.files[0];if(needClient()){e.target.value="";return}if(!f)return;const rd=new FileReader();
+ rd.onload=async ev=>{const n=nameFrom(f.name);await upsertMaster(n,ev.target.result);toast('Added "'+n+'" to Master')};rd.readAsDataURL(f);e.target.value=""}
+async function delMaster(id){const i=master.findIndex(m=>m.id===id);if(i<0||!confirm('Delete "'+master[i].name+'" from Master?'))return;
+ master.splice(i,1);await kvSet("master",master);renderMaster();renderStaff()}
+async function assignMaster(id){const m=master.find(x=>x.id===id);if(!m||!client)return;m.client=client;await kvSet("master",master);renderMaster();toast('"'+m.name+'" assigned to '+client)}
+function renderMaster(){const g=$("mg"),l=mine();
+ g.innerHTML=l.length?"":'<p style="color:var(--mu);padding:30px">'+(client?'No faces for this client yet. Upload one in Staff Working Time or use "Add New Face to Master".':'Select a client to see and add faces.')+'</p>';
+ l.forEach(m=>{const c=document.createElement("div");c.className="mc";
+  c.innerHTML=`<div class="th hp" data-name="${esc(m.name)}"><img src="${m.photo}" alt=""></div><b>${esc(m.name)}</b>`+
+   (m.client?"":`<div style="font-size:11px;color:var(--mu);margin-bottom:6px">Unassigned (old)</div>`+(client?`<button class="btn s sm" style="margin-bottom:6px" onclick="assignMaster('${m.id}')">Assign to ${esc(client)}</button>`:""))+
+   `<button class="btn d sm" onclick="delMaster('${m.id}')">🗑️ Delete</button>`;g.appendChild(c)});badges()}
+
+/* Hover preview */
+function hoverSetup(){const v=$("hv"),im=$("hi");
+ const pos=e=>{let l=e.clientX+20,t=e.clientY-40;if(l+360>innerWidth)l=e.clientX-380;if(t+370>innerHeight)t=innerHeight-380;v.style.left=Math.max(10,l)+"px";v.style.top=Math.max(10,t)+"px"};
+ document.body.addEventListener("mouseover",e=>{const t=e.target.closest(".hp"),i=t&&t.querySelector("img");if(!i)return;im.src=i.src;$("hn").textContent=t.dataset.name||"";v.style.display="block";pos(e)});
+ document.body.addEventListener("mousemove",e=>{if(v.style.display==="block")pos(e)});
+ document.body.addEventListener("mouseout",e=>{if(e.target.closest(".hp")&&!(e.relatedTarget&&e.relatedTarget.closest&&e.relatedTarget.closest(".hp")))v.style.display="none"})}
+
+/* Backup */
+function dl(blob,name){const u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)}
+async function backup(){const days=await kvAll("");const dd=days.filter(x=>x&&x.date);
+ dl(new Blob([JSON.stringify({app:"iSurveillanz",version:"2.0",exportedAt:new Date().toISOString(),staffPhotoMaster:master,clients:clients,days:dd})],{type:"application/json"}),"iSurveillanz_Backup_"+date+".json");toast("Backup exported")}
+function restore(e){const f=e.target.files[0];if(!f)return;const rd=new FileReader();
+ rd.onload=async ev=>{try{const p=JSON.parse(ev.target.result);
+  if(Array.isArray(p.staffPhotoMaster)){master=p.staffPhotoMaster;await kvSet("master",master)}
+  if(Array.isArray(p.clients)){clients=[...new Set([...clients,...p.clients])];await kvSet("clients",clients)}
+  if(Array.isArray(p.days))for(const d of p.days)await kvSet(dayKey(d.date,d.client||""),d);
+  await loadDay();renderMaster();toast("Data restored")}catch(err){alert("Invalid backup file: "+err.message)}};rd.readAsText(f);e.target.value=""}
+
+/* Excel export: exactly 2 sheets */
+const STAFF_ROW_PT=145;      /* staff row height: 145 points = 194 px */
+const STAFF_PHOTO_COL=27;    /* photo column width: 27 chars = ~194 px (square cell) */
+async function doExcel(client){
+ const btn=$("xb"),old=btn.innerHTML;btn.innerHTML="⏳ Generating Excel...";btn.disabled=true;
+ try{
+  if(typeof ExcelJS==="undefined")throw new Error("ExcelJS could not load. Check your internet connection.");
+  const wb=new ExcelJS.Workbook();wb.creator="iSurveillanz System";wb.created=new Date();
+  const rdate=nice(date),prep=$("pb").value.trim()||"iSurveillanz Surveillance Team";
+  const fill=c=>({type:"pattern",pattern:"solid",fgColor:{argb:c}});
+  const thin={style:"thin",color:{argb:"FFE2E8F0"}};
+  const box=r=>{for(let c=1;c<=6;c++)r.getCell(c).border={top:thin,left:thin,bottom:thin,right:thin}};
+  const head=(ws,title,cols)=>{
+   ws.mergeCells("A1:F1");const t=ws.getCell("A1");t.value=title;t.font={name:"Arial",size:16,bold:true,color:{argb:"FFFFFFFF"}};t.alignment={horizontal:"center",vertical:"middle"};t.fill=fill("FF1E40AF");ws.getRow(1).height=36;
+   ws.mergeCells("A2:C2");const a=ws.getCell("A2");a.value="Report Date: "+rdate+"   |   Client: "+client;a.alignment={horizontal:"left",vertical:"middle",indent:1};
+   ws.mergeCells("D2:F2");const b=ws.getCell("D2");b.value="Prepared By: "+prep;b.alignment={horizontal:"right",vertical:"middle"};
+   [a,b].forEach(x=>{x.font={name:"Arial",size:11,bold:true,color:{argb:"FF1E3A8A"}};x.fill=fill("FFF1F5F9")});
+   ws.getRow(2).height=24;ws.getRow(3).height=10;
+   const h=ws.getRow(4);h.values=cols;h.height=28;
+   h.eachCell(c=>{c.font={name:"Arial",size:11,bold:true,color:{argb:"FFFFFFFF"}};c.fill=fill("FF2563EB");c.alignment={horizontal:"center",vertical:"middle"}})};
+
+  /* Sheet 1 */
+  const s1=wb.addWorksheet("Customer Visit",{pageSetup:{orientation:"landscape",fitToPage:true,fitToWidth:1,fitToHeight:0}});
+  head(s1,"Customer Visit Report – Daily Summary",["Sr. No.","Time","Camera","Customers Count","Bought","Did Not Buy"]);
+  [10,16,24,18,14,16].forEach((w,i)=>s1.getColumn(i+1).width=w);
+  let ri=5,tc=0,tbg=0,tn=0;
+  cust.forEach((r,i)=>{
+   const c=r.customers,b=+r.bought||0,d=+r.didNotBuy||0;tc+=c;tbg+=b;tn+=d;
+   const row=s1.getRow(ri);row.values=[i+1,ampm(r.time),r.camera||CAMS[0],c,b>0?b:"-",d>0?d:"-"];row.height=24;
+   const bg=i%2?"FFF8FAFC":"FFFFFFFF";
+   for(let k=1;k<=6;k++){const x=row.getCell(k);x.fill=fill(bg);x.alignment={horizontal:k===3?"left":"center",vertical:"middle",indent:k===3?1:0};x.font={name:"Arial",size:10}}
+   if(b>0){const x=row.getCell(5);x.fill=fill("FFDCFCE7");x.font={name:"Arial",size:11,bold:true,color:{argb:"FF166534"}}}
+   if(d>0){const x=row.getCell(6);x.fill=fill("FFFEE2E2");x.font={name:"Arial",size:11,bold:true,color:{argb:"FF991B1B"}}}
+   row.getCell(4).font={name:"Arial",size:10,bold:true};box(row);ri++});
+  s1.mergeCells("A"+ri+":C"+ri);const tr=s1.getRow(ri);tr.height=26;
+  tr.getCell(1).value="Total";tr.getCell(4).value=tc;tr.getCell(5).value=tbg;tr.getCell(6).value=tn;
+  for(let k=1;k<=6;k++){const x=tr.getCell(k);x.fill=fill("FFF1F5F9");x.alignment={horizontal:"center",vertical:"middle"};
+   x.font={name:"Arial",size:11,bold:true,color:{argb:k===5?"FF166534":k===6?"FF991B1B":"FF0F172A"}};
+   x.border={top:{style:"medium",color:{argb:"FF94A3B8"}},left:thin,bottom:{style:"medium",color:{argb:"FF94A3B8"}},right:thin}}
+
+  /* Sheet 2 */
+  const s2=wb.addWorksheet("Staff Working Time",{pageSetup:{orientation:"landscape",fitToPage:true,fitToWidth:1,fitToHeight:0}});
+  head(s2,"Staff Working Time – Daily Report",["Sr. No.","Staff Name","Staff Photo","Start Time","End Time","Remarks"]);
+  [10,22,STAFF_PHOTO_COL,16,16,46].forEach((w,i)=>s2.getColumn(i+1).width=w);
+  staff.forEach((r,i)=>{
+   const n=5+i,row=s2.getRow(n);
+   row.values=[i+1,r.name||"Staff "+(i+1),"",ampm(r.startTime),ampm(r.endTime),remark(r.startTime,r.endTime)];row.height=STAFF_ROW_PT;
+   const bg=i%2?"FFF8FAFC":"FFFFFFFF";
+   for(let k=1;k<=6;k++){const x=row.getCell(k);x.fill=fill(bg);x.alignment={horizontal:k===6?"left":"center",vertical:"middle",wrapText:k===6,indent:k===6?1:0};x.font={name:"Arial",size:k===2?11:10,bold:k===2}}
+   box(row);
+   if(r.photo&&r.photo.startsWith("data:image/")){try{
+    const m=r.photo.match(/^data:image\/(\w+);base64,/);const ext=m&&m[1].toLowerCase()==="png"?"png":"jpeg";
+    const id=wb.addImage({base64:r.photo.replace(/^data:image\/\w+;base64,/,""),extension:ext});
+    s2.addImage(id,{tl:{col:2,row:n-1},br:{col:3,row:n},editAs:"oneCell"})}catch(er){console.warn("Image skipped",er)}}});
+
+  wb.views=[{x:0,y:0,width:10000,height:20000,firstSheet:0,activeTab:0,visibility:"visible"}];
+  const buf=await wb.xlsx.writeBuffer();
+  dl(new Blob([buf],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}),fileName(client));
+  toast("Excel report downloaded!");
+ }catch(err){console.error(err);alert("Error creating Excel report: "+err.message)}
+ finally{btn.innerHTML=old;btn.disabled=false}
+}
+</script></body></html>
